@@ -1,0 +1,124 @@
+GENIE CIVIL PRO - KEMTA / ANALYSES PROBABILISTES
+==============================================
+
+ACCES DIRECT - VERSION SANS CONNEXION
+L'application ouvre directement le tableau de bord, sans inscription,
+identifiant, nom ou mot de passe a saisir. S'il n'existe aucun chantier,
+le bouton Creer mon premier chantier ouvre le formulaire correspondant.
+Les anciennes rubriques Comptes et Acces ne sont plus proposees.
+Toute personne ayant acces a cette application peut voir et modifier
+toutes les donnees de la base configuree : usage local ou acces prive.
+Ne pas publier cette version sur une URL publique contenant des donnees
+confidentielles sans ajouter une protection externe adaptee.
+
+Les anciens comptes et leurs donnees ne sont pas supprimes. Une identite
+technique locale est creee automatiquement dans la base pour conserver
+le fonctionnement des sauvegardes et de l'historique. Ce n'est pas une
+inscription utilisateur et aucun mot de passe n'est demande ni affiche.
+Toutes les operations de cette version sont attribuees a cette identite :
+l'historique ne permet plus de distinguer les personnes qui utilisent l'app.
+Les sections du guide PDF precedent sur la connexion, les comptes et
+les attributions de droits ne s'appliquent plus a cette version.
+
+INSTALLER ET LANCER
+python -m pip install -r requirement.text
+python -m streamlit run app.py
+
+Python 3.11 ou plus recent recommande. Code, styles, schemas SQL et rapports
+regroupes dans app.py. Seuls app.py, requirement.text et README sont livres.
+
+DONNEES EXISTANTES
+Cette version est une copie amelioree du fichier fourni pour Kemta.
+L'original et ses donnees ne sont pas deplaces ni modifies.
+Le stockage SQLite conserve la convention de la version originale :
+C:\Users\<utilisateur>\GenieCivilProStreamlit\geniecivil_pro.db
+Si une base existe deja a cet endroit, la nouvelle version la retrouve.
+Sauvegarder la base avant toute utilisation de la nouvelle version.
+La nouvelle version n'ajoute pas de table pour les analyses probabilistes.
+
+Pour ouvrir une autre base existante, avant lancement dans PowerShell :
+$env:GENIE_CIVIL_DB = 'C:\mes-donnees\geniecivil_pro.db'
+python -m streamlit run app.py
+
+GENIE_CIVIL_DATA definit le dossier de donnees par defaut.
+DATABASE_URL permet d'utiliser PostgreSQL, sans copier automatiquement SQLite.
+Aucun secret ne doit etre publie. Dans cette version a acces direct,
+les anciens droits par utilisateur ne limitent pas l'acces a l'interface.
+
+NAVIGATION
+La synthese est maintenant un tableau de bord colore : budget, depenses,
+avancement, malfacons, repartition des depenses et historique d'avancement.
+Les boutons Actions rapides ouvrent directement les outils correspondants.
+Le bouton Tableau de bord du menu lateral ramene a l'accueil du chantier.
+Les graphiques utilisent exclusivement les donnees du chantier selectionne.
+Les etats vides restent explicites ; aucune donnee fictive n'est ajoutee.
+
+Synthese / Chantiers / Finances / Qualite / Analyses probabilistes /
+Administration. Les modules metier, photos, archives, historiques et exports
+sont conserves. La gestion interactive des comptes et droits est retiree.
+
+ANALYSES
+Selectionner un chantier autorise et le domaine Analyses probabilistes.
+Les valeurs initiales sont des EXEMPLES FICTIFS, pas les donnees du chantier.
+Renseigner la provenance et remplacer les parametres avant interpretation.
+
+Couts : somme quantite x prix, variables independantes ; CV entre 0 et 0,50.
+Delais : dependances acycliques, branches paralleles, ressources illimitees.
+Materiaux : essais CSV/Excel (colonne numerique), ou saisie manuelle.
+Le seuil et l'unite sont libres ; aucune qualification normative implicite.
+Les mesures doivent etre positives, sans valeur manquante. Maximum 20 000.
+CSV : entete de colonne, separateur virgule ; decimales avec un point.
+Poutre : section rectangulaire pleine, appuis simples, charge centrale
+et charge uniforme ; pas de poids propre automatique. SymPy fournit les
+fonctions d'influence. Conversions SI explicites dans le code.
+Probabilite calculee : P(fy - sigma < 0), en MPa. La limite de fleche
+est un indicateur nominal separe, pas un evenement inclus dans cette probabilite.
+L'elasticite lineaire n'est plus physiquement valable au-dela de la resistance.
+
+Les variables sont independantes : aucune correlation modelisee.
+Lognormale et uniforme positive avec moyenne et CV. CV nul = deterministe.
+Monte-Carlo reproductible, graine configurable, 1 000 a 100 000 tirages.
+Calcul sur bouton uniquement, cache limite a six etudes pendant 30 minutes.
+Les schemas mecaniques deterministes sont reactifs, pas les simulations.
+
+INTERPRETATION
+IC binomial exact de Clopper-Pearson a 95 % : incertitude d'echantillonnage,
+pas incertitude du modele. Zero evenement ne signifie jamais risque nul.
+P80/P95 : quantiles predictifs conditionnels, pas intervalles de confiance.
+Materiaux : frequence empirique et probabilite lognormale ajustee distinctes.
+L'incertitude de l'ajustement n'est pas quantifiee.
+Spearman : association monotone, pas causalite ni contribution additive.
+Les modeles ne certifient ni la securite ni la conformite d'un ouvrage.
+Avis d'un ingenieur qualifie indispensable pour toute decision de conception.
+
+SCENARIOS ET EXPORTS
+Le resultat A est actualise sur bouton. Memoriser B avant de modifier A.
+Les etudes et B sont conserves dans la session, scopes par compte et chantier.
+Telecharger les JSON A et B pour conservation durable ; les reimporter ensuite.
+La comparaison se limite au meme type d'analyse et aux memes unites.
+Exporter CSV pour les tirages/mesures, JSON pour les parametres, PDF pour
+les resultats, hypotheses et graphiques. Le PDF de chantier, prepare dans
+Administration / Sauvegardes, annexe la derniere analyse calculee du chantier
+pendant cette session (ses parametres sont reproduits dans le rapport).
+Les modifications non calculees ne remplacent pas cette derniere analyse.
+Les fichiers existants de rapport sont des instantanes : les regenerer
+apres une modification. Les simulations ne remplacent aucune donnee reelle.
+
+HEBERGEMENT
+Streamlit Community Cloud attend requirements.txt, pas requirement.text.
+Renommer le fichier dans une copie destinee au deploiement, pas ici.
+SQLite local sur un hebergement ephemere n'est pas durable : utiliser une
+base PostgreSQL persistante. Les sauvegardes contiennent des comptes et
+des donnees personnelles : ne jamais les publier dans GitHub.
+
+PRESENTATION
+Bandeau d'identite vert profond, navigation par boutons avec icones,
+indicateurs colores bleu, ambre, vert et rose. L'accueil sans chantier
+affiche des compteurs vides sans creer de donnees fictives.
+Le HTML et le CSS sont integres dans app.py ; la disposition s'adapte
+aux petits ecrans. Les outils et les calculs existants sont conserves.
+
+REFERENCES
+https://docs.sympy.org/latest/modules/physics/continuum_mechanics/beam.html
+https://docs.scipy.org/doc/scipy/reference/generated/scipy.stats.binomtest.html
+https://docs.scipy.org/doc/scipy/reference/generated/scipy.stats.spearmanr.html
